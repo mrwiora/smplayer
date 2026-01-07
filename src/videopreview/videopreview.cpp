@@ -40,6 +40,8 @@
 #include <QImageWriter>
 #include <QImageReader>
 #include <QDebug>
+#include <QCryptographicHash>
+#include <QFile>
 
 #include <cmath>
 
@@ -728,6 +730,21 @@ void VideoPreview::saveImage() {
                                  tr("The file couldn't be saved") );
 		} else {
 			last_directory = QFileInfo(filename).absolutePath();
+			
+			// Calculate MD5 hash of the saved file
+			QFile file(filename);
+			if (file.open(QFile::ReadOnly)) {
+				QByteArray fileData = file.readAll();
+				QByteArray md5Hash = QCryptographicHash::hash(fileData, QCryptographicHash::Md5);
+				QString md5String = md5Hash.toHex();
+				file.close();
+				
+				qDebug("VideoPreview::saveImage: MD5: %s", md5String.toUtf8().constData());
+				
+				// Display MD5 hash to the user
+				QMessageBox::information(this, tr("File saved successfully"), 
+				                         tr("File: %1\n\nMD5: %2").arg(QFileInfo(filename).fileName()).arg(md5String));
+			}
 		}
 	}
 }
