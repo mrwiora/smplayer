@@ -260,13 +260,9 @@ bool VideoPreview::extractImages() {
 		}
 	}
 
-	// Store hash information for later use in saveImage
-	file_hash = i.file_hash;
-	hash_algorithm_name = i.hash_algorithm_name;
-
 	// Update hash label in preview
-	if (!file_hash.isEmpty() && !hash_algorithm_name.isEmpty()) {
-		QString hash_text = QString("%1: %2").arg(hash_algorithm_name).arg(file_hash);
+	if (!i.file_hash.isEmpty() && !i.hash_algorithm_name.isEmpty()) {
+		QString hash_text = QString("%1: %2").arg(i.hash_algorithm_name).arg(i.file_hash);
 		hash_label->setText(hash_text);
 	} else {
 		hash_label->clear();
@@ -812,40 +808,6 @@ void VideoPreview::saveImage() {
 		if (image.size().width() > prop.max_width) {
 			image = image.scaledToWidth(prop.max_width, Qt::SmoothTransformation);
 			qDebug("VideoPreview::saveImage: image scaled to : %d %d", image.size().width(), image.size().height());
-		}
-
-		// Add hash information to the image
-		if (!file_hash.isEmpty() && !hash_algorithm_name.isEmpty()) {
-			QPainter painter(&image);
-			QFont font;
-			font.setPointSize(10);
-			font.setBold(true);
-			painter.setFont(font);
-			
-			QString hash_text = QString("%1: %2").arg(hash_algorithm_name).arg(file_hash);
-			
-			// Calculate text dimensions
-			QFontMetrics fm(font);
-			#if (QT_VERSION >= QT_VERSION_CHECK(5, 11, 0))
-			int text_width = fm.horizontalAdvance(hash_text);
-			#else
-			int text_width = fm.width(hash_text);
-			#endif
-			int text_height = fm.height();
-			
-			// Position at bottom left (changed from bottom right)
-			int x = 10;
-			int y = image.height() - text_height - 5;
-			
-			// Draw background rectangle
-			QRect bg_rect(x - 5, y - 2, text_width + 10, text_height + 4);
-			painter.fillRect(bg_rect, QBrush(QColor(255, 255, 255, 200)));
-			
-			// Draw text
-			painter.setPen(Qt::black);
-			painter.drawText(x, y + text_height - 5, hash_text);
-			
-			qDebug("VideoPreview::saveImage: added %s hash to image: %s", hash_algorithm_name.toUtf8().constData(), file_hash.toUtf8().constData());
 		}
 
 		if (!image.save(filename)) {

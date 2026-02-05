@@ -175,9 +175,6 @@ protected:
 		int thumbnail_width;
 	} run;
 
-	QString file_hash;
-	QString hash_algorithm_name;
-
 	QString last_directory;
 	bool save_last_directory;
 	QString error_message;
