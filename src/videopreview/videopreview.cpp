@@ -803,11 +803,19 @@ void VideoPreview::saveImage() {
                             proposed_name, tr("Images") +" ("+ write_formats +")");
 
 	if (!filename.isEmpty()) {
+		// Temporarily hide hash_label to avoid duplication (it will be added as overlay later)
+		bool hash_was_visible = hash_label->isVisible();
+		hash_label->setVisible(false);
+		
 		#if QT_VERSION >= 0x050000
 		QPixmap image = w_contents->grab();
 		#else
 		QPixmap image = QPixmap::grabWidget(w_contents);
 		#endif
+		
+		// Restore hash_label visibility
+		hash_label->setVisible(hash_was_visible);
+		
 		qDebug("VideoPreview::saveImage: size: %d %d", image.size().width(), image.size().height());
 		if (image.size().width() > prop.max_width) {
 			image = image.scaledToWidth(prop.max_width, Qt::SmoothTransformation);
