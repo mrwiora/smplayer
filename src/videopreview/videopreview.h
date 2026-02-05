@@ -144,6 +144,7 @@ protected:
 	QLabel * title;
 	QLabel * info;
 	QLabel * foot;
+	QLabel * hash_label;
 	QWidget * w_contents;
 	QScrollArea * scroll_area;
 	QDialogButtonBox * button_box;
