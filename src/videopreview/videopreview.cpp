@@ -175,7 +175,7 @@ VideoPreview::VideoPreview(QString mplayer_path, QWidget * parent) : QWidget(par
 	info->setStyleSheet(COLOR_STYLE);
 	title->setStyleSheet(COLOR_STYLE);
 	foot->setStyleSheet(COLOR_STYLE);
-	hash_label->setStyleSheet(COLOR_STYLE);
+	hash_label->setStyleSheet(COLOR_STYLE " font-weight: bold;");
 }
 
 VideoPreview::~VideoPreview() {
@@ -266,7 +266,7 @@ bool VideoPreview::extractImages() {
 
 	// Update hash label in preview
 	if (!file_hash.isEmpty() && !hash_algorithm_name.isEmpty()) {
-		QString hash_text = QString("<b>%1:</b> %2").arg(hash_algorithm_name).arg(file_hash);
+		QString hash_text = QString("%1: %2").arg(hash_algorithm_name).arg(file_hash);
 		hash_label->setText(hash_text);
 	} else {
 		hash_label->clear();
