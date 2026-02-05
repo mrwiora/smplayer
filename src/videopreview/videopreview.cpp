@@ -101,12 +101,21 @@ VideoPreview::VideoPreview(QString mplayer_path, QWidget * parent) : QWidget(par
 	info = new QLabel(this);
 	info->setWordWrap(false);
 
+	hash_label = new QLabel(this);
+	hash_label->setAlignment(Qt::AlignLeft);
+
 	foot = new QLabel(this);
 	foot->setAlignment(Qt::AlignRight);
 
 	grid_layout = new QGridLayout;
 	grid_layout->setSpacing(2);
 	grid_layout->setContentsMargins(0, 0, 0, 0);
+
+	// Create horizontal layout for footer (hash on left, logo on right)
+	QHBoxLayout * footer_layout = new QHBoxLayout;
+	footer_layout->setContentsMargins(0, 0, 0, 0);
+	footer_layout->addWidget(hash_label);
+	footer_layout->addWidget(foot);
 
 	QVBoxLayout * l = new QVBoxLayout;
 	l->setContentsMargins(4, 4, 4, 4);
@@ -115,7 +124,7 @@ VideoPreview::VideoPreview(QString mplayer_path, QWidget * parent) : QWidget(par
 	l->addWidget(title);
 	l->addWidget(info);
 	l->addLayout(grid_layout);
-	l->addWidget(foot);
+	l->addLayout(footer_layout);
 
 	w_contents->setLayout(l);
 
@@ -166,6 +175,7 @@ VideoPreview::VideoPreview(QString mplayer_path, QWidget * parent) : QWidget(par
 	info->setStyleSheet(COLOR_STYLE);
 	title->setStyleSheet(COLOR_STYLE);
 	foot->setStyleSheet(COLOR_STYLE);
+	hash_label->setStyleSheet(COLOR_STYLE);
 }
 
 VideoPreview::~VideoPreview() {
@@ -253,6 +263,14 @@ bool VideoPreview::extractImages() {
 	// Store hash information for later use in saveImage
 	file_hash = i.file_hash;
 	hash_algorithm_name = i.hash_algorithm_name;
+
+	// Update hash label in preview
+	if (!file_hash.isEmpty() && !hash_algorithm_name.isEmpty()) {
+		QString hash_text = QString("<b>%1:</b> %2").arg(hash_algorithm_name).arg(file_hash);
+		hash_label->setText(hash_text);
+	} else {
+		hash_label->clear();
+	}
 
 	displayVideoInfo(i);
 
@@ -748,6 +766,7 @@ void VideoPreview::showInfo(bool visible) {
 	qDebug("VideoPreview::showInfo: %d", visible);
 	info->setVisible(visible);
 	foot->setVisible(visible);
+	hash_label->setVisible(visible);
 }
 
 void VideoPreview::saveImage() {
